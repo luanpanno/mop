@@ -1,0 +1,50 @@
+# XcodeGen spec. Generate the Xcode project with: xcodegen generate
+name: Mop
+options:
+  bundleIdPrefix: com.luanpanno
+  deploymentTarget:
+    macOS: "26.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MACOSX_DEPLOYMENT_TARGET: "26.0"
+targets:
+  MopCore:
+    type: framework
+    platform: macOS
+    sources: [Sources/MopCore]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.luanpanno.mop.core
+        GENERATE_INFOPLIST_FILE: YES
+  Mop:
+    type: application
+    platform: macOS
+    sources: [Sources/Mop]
+    dependencies:
+      - target: MopCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.luanpanno.mop
+        INFOPLIST_FILE: Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Resources/Mop.entitlements
+        CODE_SIGN_IDENTITY: "-"
+        ENABLE_HARDENED_RUNTIME: NO
+  MopCoreTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources: [Tests/MopCoreTests]
+    dependencies:
+      - target: MopCore
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  Mop:
+    build:
+      targets:
+        Mop: all
+        MopCoreTests: [test]
+    test:
+      targets: [MopCoreTests]

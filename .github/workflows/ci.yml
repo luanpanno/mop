@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  swiftpm:
+    name: SwiftPM build & test
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: swift build
+      - name: Test
+        run: swift test
+      - name: Bundle app
+        run: scripts/build-app.sh release
+
+  xcode:
+    name: Xcode project build
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate project
+        run: xcodegen generate
+      - name: Build & test
+        run: |
+          xcodebuild -project Mop.xcodeproj -scheme Mop -destination 'platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO build test
