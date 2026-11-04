@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/overview.png" width="860" alt="Mop overview: disk usage, space Mop can free, and space by folder">
+  <img src="docs/overview.png" width="860" alt="Mop overview: disk usage, space Mop can free, and junk by category">
 </p>
 
 **Mop** is a free, open-source macOS app that keeps your disk clean:
