@@ -5,6 +5,8 @@ All notable changes to Mop are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-03
+
 ### Added
 - App icon.
 - Contributing guide, security policy, issue and pull request templates, Dependabot.
@@ -27,5 +29,6 @@ All notable changes to Mop are listed here. The format follows
 - Low-disk notifications, scheduled auto-clean, detection of apps deleted outside Mop,
   Full Disk Access onboarding, and launch at login.
 
-[Unreleased]: https://github.com/luanpanno/mop/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/luanpanno/mop/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/luanpanno/mop/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/luanpanno/mop/releases/tag/v0.1.0
