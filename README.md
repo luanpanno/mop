@@ -37,6 +37,15 @@ xcodegen generate
 open Mop.xcodeproj
 ```
 
+### Notes for building without Xcode
+
+- Recent SDKs declare SwiftUI's `@State` as a macro whose compiler plugin ships only with Xcode.
+  Views therefore use `@ViewState`, a type alias for the `State` property wrapper that builds with
+  both the Command Line Tools and Xcode.
+- If `swift test` reports `plugin for module 'TestingMacros' not found`, run it again. The
+  Command Line Tools sometimes fail to load the plugin on a fresh build.
+- Notifications and launch at login only work from the `.app` bundle, not from `swift run`.
+
 ## Full Disk Access
 
 Some folders (Mail, Safari, other apps' containers) can only be scanned with **Full Disk Access**.
