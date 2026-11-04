@@ -1,0 +1,49 @@
+name: Bug report
+description: Something doesn't work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! If Mop removed or offered to remove something it shouldn't, please
+        [report it privately](https://github.com/luanpanno/mop/security/advisories/new) instead.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open Mop
+        2. Go to Cleanup
+        3. ...
+  - type: input
+    id: mop-version
+    attributes:
+      label: Mop version
+      description: Settings → About
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: macos-version
+    attributes:
+      label: macOS version
+      placeholder: "26.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: fda
+    attributes:
+      label: Does Mop have Full Disk Access?
+      options: ["Yes", "No", "Not sure"]
+  - type: textarea
+    id: logs
+    attributes:
+      label: Screenshots or logs
+      description: The removal log is in ~/Library/Application Support/Mop/removals.log

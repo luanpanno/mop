@@ -1,0 +1,21 @@
+name: Feature request
+description: Suggest an idea, such as a new cleanup category
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like Mop to do?
+      description: For a new cleanup category, include the folders involved and whether they're safe to remove.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered

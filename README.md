@@ -1,4 +1,15 @@
-# Mop
+<p align="center">
+  <img src="Resources/AppIcon.png" width="128" alt="Mop icon">
+</p>
+
+<h1 align="center">Mop</h1>
+
+<p align="center">
+  <a href="https://github.com/luanpanno/mop/actions/workflows/ci.yml"><img src="https://github.com/luanpanno/mop/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/luanpanno/mop/releases/latest"><img src="https://img.shields.io/github/v/release/luanpanno/mop" alt="Latest release"></a>
+  <img src="https://img.shields.io/badge/macOS-26%2B-blue" alt="macOS 26+">
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/luanpanno/mop" alt="MIT license"></a>
+</p>
 
 **Mop** is a free, open-source macOS app that keeps your disk clean:
 
@@ -10,6 +21,19 @@
 - Extras: low-disk notifications, scheduled auto-clean of safe categories, detection of apps deleted outside Mop, and Full Disk Access onboarding.
 
 Mop never deletes files permanently: everything is **moved to the Trash**, so you can put it back. The only exception is the explicit *Empty Trash* action.
+
+## How Mop keeps your files safe
+
+- **Nothing is deleted permanently.** Every removal moves items to the Trash, so you can use *Put Back*.
+  The only exception is the *Empty Trash* category, which asks for confirmation first.
+- **You review before anything is removed.** Each screen shows what will be removed and its size, with checkboxes.
+- **Leftovers are matched conservatively.** Only files named after the app's bundle identifier
+  (for example `com.foo.app.plist`) are preselected. Files that only share the app's name are marked
+  *Possible match* and stay unchecked.
+- **Protected locations are off-limits.** A safety check blocks system folders (`/System`, `/usr`, …), Apple apps,
+  top-level folders such as `~/Library/Caches` itself, and Mop itself, whatever the UI asks for.
+- **Apple's own caches are skipped**, and auto-clean only touches categories marked safe, which are files that apps rebuild.
+- **Everything is logged** in `~/Library/Application Support/Mop/removals.log`.
 
 ## Install
 
@@ -72,6 +96,11 @@ Tests/            unit tests for MopCore (Swift Testing)
 - Developer ID signing, notarization, DMG releases, Homebrew cask
 - Sparkle auto-updates
 - Portuguese (pt-BR) translation
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md). Report safety issues privately as described in [SECURITY.md](SECURITY.md).
+Changes are listed in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

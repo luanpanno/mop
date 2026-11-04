@@ -21,7 +21,10 @@ targets:
   Mop:
     type: application
     platform: macOS
-    sources: [Sources/Mop]
+    sources:
+      - Sources/Mop
+      - path: Resources/AppIcon.icns
+        buildPhase: resources
     dependencies:
       - target: MopCore
     settings:
