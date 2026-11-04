@@ -11,6 +11,10 @@
   <a href="LICENSE"><img src="https://img.shields.io/github/license/luanpanno/mop" alt="MIT license"></a>
 </p>
 
+<p align="center">
+  <img src="docs/overview.png" width="860" alt="Mop overview: disk usage, space Mop can free, and junk by category">
+</p>
+
 **Mop** is a free, open-source macOS app that keeps your disk clean:
 
 - **Uninstaller**: removes apps *and* the files they leave behind (Application Support, caches, preferences, containers, launch agents…).
