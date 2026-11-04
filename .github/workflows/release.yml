@@ -1,0 +1,54 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check tag matches app version
+        run: |
+          VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" Resources/Info.plist)
+          if [[ "v$VERSION" != "$GITHUB_REF_NAME" ]]; then
+            echo "Tag $GITHUB_REF_NAME does not match Info.plist version $VERSION" >&2
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Test
+        run: swift test
+
+      - name: Build app
+        run: scripts/build-app.sh release
+
+      - name: Package
+        run: |
+          ditto -c -k --keepParent build/Mop.app "build/Mop-$VERSION.zip"
+          shasum -a 256 "build/Mop-$VERSION.zip" | tee "build/Mop-$VERSION.zip.sha256"
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Mop ${{ env.VERSION }}
+          files: |
+            build/Mop-${{ env.VERSION }}.zip
+            build/Mop-${{ env.VERSION }}.zip.sha256
+          generate_release_notes: true
+          body: |
+            Requires macOS 26 or later.
+
+            **This build is ad-hoc signed (not notarized yet).** macOS will block it the first time:
+            unzip it, move `Mop.app` to `/Applications`, then run
+
+            ```
+            xattr -dr com.apple.quarantine /Applications/Mop.app
+            ```
+
+            or open **System Settings → Privacy & Security** and click **Open Anyway**.

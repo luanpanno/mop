@@ -11,6 +11,13 @@
 
 Mop never deletes files permanently: everything is **moved to the Trash**, so you can put it back. The only exception is the explicit *Empty Trash* action.
 
+## Install
+
+Download the latest `Mop-x.y.z.zip` from [Releases](https://github.com/luanpanno/mop/releases), unzip it and move `Mop.app` to `/Applications`.
+Builds aren't notarized yet, so the first time you open it, run `xattr -dr com.apple.quarantine /Applications/Mop.app` (or use *Open Anyway* in System Settings → Privacy & Security).
+
+To cut a release, bump `CFBundleShortVersionString` in `Resources/Info.plist`, then push a matching tag (`git tag v0.2.0 && git push origin v0.2.0`). The Release workflow builds, zips and publishes it.
+
 ## Requirements
 
 - macOS 26 or later
