@@ -35,7 +35,7 @@ enum MainMenu {
         add(editMenu, to: main)
 
         let viewMenu = NSMenu(title: "View")
-        for (index, section) in SidebarSection.allCases.enumerated() {
+        for (index, section) in SidebarSection.tools.enumerated() {
             let item = viewMenu.addItem(withTitle: section.title, action: #selector(AppDelegate.showSection(_:)), keyEquivalent: "\(index + 1)")
             item.representedObject = section.rawValue
         }

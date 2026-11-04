@@ -3,9 +3,12 @@ import MopCore
 import Observation
 
 enum SidebarSection: String, CaseIterable, Identifiable, Hashable {
-    case overview, uninstaller, cleanup, largeFiles
+    case overview, uninstaller, cleanup, largeFiles, settings
 
     var id: String { rawValue }
+
+    /// The feature screens (everything except Settings).
+    static let tools: [SidebarSection] = [.overview, .uninstaller, .cleanup, .largeFiles]
 
     var title: String {
         switch self {
@@ -13,6 +16,7 @@ enum SidebarSection: String, CaseIterable, Identifiable, Hashable {
         case .uninstaller: "Uninstaller"
         case .cleanup: "Cleanup"
         case .largeFiles: "Large Files"
+        case .settings: "Settings"
         }
     }
 
@@ -22,6 +26,7 @@ enum SidebarSection: String, CaseIterable, Identifiable, Hashable {
         case .uninstaller: "xmark.app"
         case .cleanup: "sparkles"
         case .largeFiles: "doc.on.doc"
+        case .settings: "gearshape"
         }
     }
 }

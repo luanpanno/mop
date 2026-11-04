@@ -83,7 +83,7 @@ final class StatusItemController: NSObject {
         menu.addItem(info("\(state.reclaimable.formattedBytes) can be freed", symbol: "sparkles"))
         menu.addItem(.separator())
 
-        for section in SidebarSection.allCases {
+        for section in SidebarSection.tools {
             let entry = item(section.title, #selector(openSection(_:)))
             entry.representedObject = section.rawValue
             entry.image = NSImage(systemSymbolName: section.symbol, accessibilityDescription: nil)

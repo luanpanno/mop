@@ -8,8 +8,14 @@ struct MainView: View {
         @Bindable var state = state
         NavigationSplitView {
             List(selection: Binding(get: { state.section }, set: { if let s = $0 { state.section = s } })) {
-                ForEach(SidebarSection.allCases) { section in
-                    Label(section.title, systemImage: section.symbol).tag(section)
+                Section {
+                    ForEach(SidebarSection.tools) { section in
+                        Label(section.title, systemImage: section.symbol).tag(section)
+                    }
+                }
+                Section {
+                    Label(SidebarSection.settings.title, systemImage: SidebarSection.settings.symbol)
+                        .tag(SidebarSection.settings)
                 }
             }
             .navigationSplitViewColumnWidth(min: 190, ideal: 210)
@@ -25,6 +31,7 @@ struct MainView: View {
                     case .uninstaller: AppListView()
                     case .cleanup: CleanupView()
                     case .largeFiles: LargeFilesView()
+                    case .settings: SettingsView()
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -27,13 +27,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        NSApp.setActivationPolicy(.accessory)
         NSApp.mainMenu = MainMenu.build()
 
         windows = WindowManager(state: state, router: router)
         statusItem = StatusItemController(state: state, router: router)
         router.openMainHandler = { [weak self] section in self?.windows.showMain(section: section) }
-        router.openSettingsHandler = { [weak self] in self?.windows.showSettings() }
+        router.openSettingsHandler = { [weak self] in self?.windows.showMain(section: .settings) }
         router.closePopoverHandler = { [weak self] in self?.statusItem.closePopover() }
         router.quickCleanHandler = { [weak self] in self?.confirmQuickClean() }
 
@@ -59,18 +58,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
             await autoClean.runIfDue()
         }
 
+        // Mop launches as a regular app (with a Dock icon). Only drop to menu-bar-only mode when no
+        // window is shown: switching to .accessory and back right away would leave the window unfocused.
         let defaults = UserDefaults.standard
         if !state.hasFullDiskAccess && !defaults.bool(forKey: Prefs.Key.fullDiskAccessOnboardingDone) {
             state.showOnboarding = true
             windows.showMain()
         } else if !launchedAtLogin && defaults.bool(forKey: Prefs.Key.openWindowAtLaunch) {
             windows.showMain()
+        } else {
+            NSApp.setActivationPolicy(.accessory)
         }
     }
 
+    /// Opening Mop again from Finder, Spotlight, Launchpad or the Dock while it's running in the menu bar.
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         windows.showMain()
-        return true
+        return false
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -169,7 +173,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCent
     // MARK: Menu actions
 
     @objc func showSettings(_ sender: Any?) {
-        windows.showSettings()
+        windows.showMain(section: .settings)
     }
 
     @objc func showSection(_ sender: NSMenuItem) {

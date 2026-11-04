@@ -1,18 +1,19 @@
 import AppKit
 import SwiftUI
 
-/// Owns the main and settings windows. The Dock icon is shown only while one of them is open.
+/// Owns the main window. The Dock icon is shown only while it is open.
 @MainActor
 final class WindowManager: NSObject, NSWindowDelegate {
     private let state: AppState
     private let router: AppRouter
     private var mainWindow: NSWindow?
-    private var settingsWindow: NSWindow?
 
     init(state: AppState, router: AppRouter) {
         self.state = state
         self.router = router
     }
+
+    var isMainWindowVisible: Bool { mainWindow?.isVisible == true }
 
     func showMain(section: SidebarSection? = nil) {
         if let section { state.section = section }
@@ -31,41 +32,39 @@ final class WindowManager: NSObject, NSWindowDelegate {
             window.setFrameAutosaveName("MopMainWindow")
             mainWindow = window
         }
-        present(mainWindow)
+        present(mainWindow!)
     }
 
-    func showSettings() {
-        if settingsWindow == nil {
-            let hosting = NSHostingController(rootView: SettingsView().environment(state).environment(router))
-            hosting.sizingOptions = [.preferredContentSize]
-            let window = NSWindow(contentViewController: hosting)
-            window.styleMask = [.titled, .closable]
-            window.title = "Mop Settings"
-            window.isReleasedWhenClosed = false
-            window.delegate = self
-            window.center()
-            settingsWindow = window
-        }
-        present(settingsWindow)
-    }
-
-    private func present(_ window: NSWindow?) {
+    /// Brings the window to the front and gives it focus.
+    ///
+    /// Switching from `.accessory` (menu bar only) to `.regular` (Dock icon) doesn't take effect until
+    /// the next run loop pass, and macOS ignores activation requests made before then. So activate now,
+    /// then once more after the switch has gone through.
+    private func present(_ window: NSWindow) {
+        let wasAccessory = NSApp.activationPolicy() != .regular
         NSApp.setActivationPolicy(.regular)
+        if window.isMiniaturized { window.deminiaturize(nil) }
         NSApp.activate()
-        window?.makeKeyAndOrderFront(nil)
+        window.makeKeyAndOrderFront(nil)
+
+        guard wasAccessory else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            MainActor.assumeIsolated {
+                NSApp.activate()
+                window.makeKeyAndOrderFront(nil)
+                window.orderFrontRegardless()
+            }
+        }
     }
 
     func windowWillClose(_ notification: Notification) {
-        // Wait for the window to actually disappear before checking.
-        DispatchQueue.main.async { [weak self] in
-            MainActor.assumeIsolated { self?.updateActivationPolicy() }
-        }
-    }
-
-    private func updateActivationPolicy() {
-        let anyVisible = [mainWindow, settingsWindow].contains { $0?.isVisible == true }
-        if !anyVisible {
-            NSApp.setActivationPolicy(.accessory)
+        // Hide the Dock icon once the window is actually gone.
+        DispatchQueue.main.async {
+            MainActor.assumeIsolated {
+                if NSApp.windows.allSatisfy({ !$0.isVisible || $0 is NSPanel || $0.level != .normal }) {
+                    NSApp.setActivationPolicy(.accessory)
+                }
+            }
         }
     }
 }
