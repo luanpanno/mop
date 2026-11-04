@@ -8,9 +8,11 @@ All notable changes to Mop are listed here. The format follows
 ### Added
 - App icon.
 - Contributing guide, security policy, issue and pull request templates, Dependabot.
-- Settings now live in the main window's sidebar, with a redesigned layout.
+- Settings now live in the main window's sidebar (at the bottom, above the disk bar), with a redesigned layout.
+- Sidebar toggle button in the toolbar.
 
 ### Fixed
+- The window layout no longer jumps when switching between screens.
 - The Mop window now comes to the front with focus when you launch Mop, or open it again while it runs in the menu bar.
 
 ## [0.1.0] - 2026-11-03

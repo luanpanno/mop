@@ -3,23 +3,23 @@ import SwiftUI
 
 struct MainView: View {
     @Environment(AppState.self) private var state
+    @ViewState private var columnVisibility: NavigationSplitViewVisibility = .all
 
     var body: some View {
         @Bindable var state = state
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
             List(selection: Binding(get: { state.section }, set: { if let s = $0 { state.section = s } })) {
-                Section {
-                    ForEach(SidebarSection.tools) { section in
-                        Label(section.title, systemImage: section.symbol).tag(section)
-                    }
-                }
-                Section {
-                    Label(SidebarSection.settings.title, systemImage: SidebarSection.settings.symbol)
-                        .tag(SidebarSection.settings)
+                ForEach(SidebarSection.tools) { section in
+                    Label(section.title, systemImage: section.symbol).tag(section)
                 }
             }
             .navigationSplitViewColumnWidth(min: 190, ideal: 210)
-            .safeAreaInset(edge: .bottom) { SidebarDiskFooter() }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                VStack(alignment: .leading, spacing: 4) {
+                    SettingsSidebarButton()
+                    SidebarDiskFooter()
+                }
+            }
         } detail: {
             VStack(spacing: 0) {
                 ForEach(state.orphans) { orphan in
@@ -37,6 +37,21 @@ struct MainView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
+        // A toolbar item that exists on every screen keeps the title bar the same height.
+        // Without it, screens with no toolbar buttons (like Settings) get a shorter title bar
+        // and the whole layout jumps when you switch to them.
+        .toolbar {
+            ToolbarItem(placement: .navigation) {
+                Button {
+                    withAnimation {
+                        columnVisibility = columnVisibility == .detailOnly ? .all : .detailOnly
+                    }
+                } label: {
+                    Label("Toggle Sidebar", systemImage: "sidebar.left")
+                }
+                .help("Show or hide the sidebar")
+            }
+        }
         .sheet(isPresented: $state.showOnboarding) {
             FullDiskAccessView()
         }
@@ -44,6 +59,40 @@ struct MainView: View {
             state.refreshPermissions()
             state.refreshDisk()
         }
+    }
+}
+
+/// Settings sits at the bottom of the sidebar, apart from the feature screens, styled like a sidebar row.
+private struct SettingsSidebarButton: View {
+    @Environment(AppState.self) private var state
+    @ViewState private var isHovered = false
+
+    private var isSelected: Bool { state.section == .settings }
+
+    var body: some View {
+        Button {
+            state.section = .settings
+        } label: {
+            Label {
+                Text(SidebarSection.settings.title)
+                    .foregroundStyle(isSelected ? AnyShapeStyle(.white) : AnyShapeStyle(.primary))
+            } icon: {
+                Image(systemName: SidebarSection.settings.symbol)
+                    .foregroundStyle(isSelected ? AnyShapeStyle(.white) : AnyShapeStyle(.tint))
+            }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 7)
+                .background {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(isSelected ? AnyShapeStyle(Color.accentColor)
+                              : AnyShapeStyle(isHovered ? Color.primary.opacity(0.06) : .clear))
+                }
+                .contentShape(.rect)
+        }
+        .buttonStyle(.plain)
+        .onHover { isHovered = $0 }
+        .padding(.horizontal, 10)
     }
 }
 
@@ -59,7 +108,9 @@ private struct SidebarDiskFooter: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
-            .padding(14)
+            .padding(.horizontal, 14)
+            .padding(.top, 8)
+            .padding(.bottom, 14)
         }
     }
 }
